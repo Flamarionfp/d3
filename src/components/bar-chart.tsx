@@ -6,7 +6,9 @@ import { CachedContents } from "@/types/data";
 
 type BarchartElement = (HTMLElement | SVGSVGElement) & Plot.Plot;
 
-type ExibitionData = { name: string; value: number }[];
+type ExibitionData = { name: string | number; value: number }[];
+
+console.log("DEBUG json.meta.view.columns", json.meta.view.columns);
 
 const data = json.meta.view.columns.filter((column) => column.id > 0);
 
@@ -15,10 +17,12 @@ const exibitionDate = data
     return {
       title: description,
       fullObject: cachedContents,
-      data: cachedContents?.top.flatMap(({ item, count }) => ({
-        name: item,
-        value: Number(count),
-      })),
+      data: cachedContents?.top.flatMap(({ item, count }) => {
+        return {
+          name: isNaN(Number(item)) ? item : Number(item),
+          value: Number(count),
+        };
+      }),
     };
   })
   .filter(({ data = [] }) => {
@@ -62,15 +66,8 @@ const createChart = (
   return barchartElement;
 };
 
-console.log(exibitionDate);
-
 export default function BarChart() {
   const containerRef = useRef<HTMLDivElement>(null);
-
-  const chartsElements = exibitionDate.map(
-    ({ title = "", data = [], fullObject }) =>
-      createChart(title, data, fullObject as CachedContents)
-  );
 
   const appendElement = useCallback(
     (
@@ -84,13 +81,16 @@ export default function BarChart() {
     []
   );
 
-  console.log(chartsElements.length);
-
   useEffect(() => {
+    const chartsElements = exibitionDate.map(
+      ({ title = "", data = [], fullObject }) =>
+        createChart(title, data, fullObject as CachedContents)
+    );
+
     chartsElements.forEach((chartElement) => {
       appendElement(containerRef, chartElement);
     });
-  }, [appendElement, chartsElements]);
+  }, [appendElement]);
 
   return <div ref={containerRef} />;
 }
