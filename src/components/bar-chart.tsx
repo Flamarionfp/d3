@@ -17,7 +17,7 @@ const exibitionDate = data
     return {
       title: description,
       fullObject: cachedContents,
-      data: cachedContents?.top.flatMap(({ item, count }) => {
+      data: cachedContents?.top.map(({ item, count }) => {
         return {
           name: isNaN(Number(item)) ? item : Number(item),
           value: Number(count),
