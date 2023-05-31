@@ -4,8 +4,9 @@ import { Inter } from "next/font/google";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "Aplicação D3",
-  description: "Exibição de Dados utilizando a biblioteca D3",
+  title: "D3",
+  description:
+    "Data on death rates for suicide, by selected population characteristics",
 };
 
 export default function RootLayout({
